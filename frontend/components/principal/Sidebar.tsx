@@ -8,6 +8,7 @@ import {
   TrendingUp,
   CalendarDays,
   BellRing,
+  UserPlus,
 } from "lucide-react";
 
 const navItems = [
@@ -15,6 +16,7 @@ const navItems = [
   { href: "/principal/performance", label: "Performance", icon: TrendingUp },
   { href: "/principal/timetable", label: "Timetable", icon: CalendarDays },
   { href: "/principal/alerts", label: "Alerts", icon: BellRing },
+  { href: "/principal/register", label: "Register Learner", icon: UserPlus },
 ];
 
 export default function Sidebar() {
