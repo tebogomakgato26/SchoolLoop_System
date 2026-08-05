@@ -12,10 +12,10 @@ export default function TeacherHearder({
   grade,
 }: TeacherHeaderProps) {
   return (
-    <div className="rounded-t-3xl bg-teal-800 px-5 pb-5 pt-4 text-white">
-      <p className="text-xs font-medium text-teal-100">{date}</p>
-      <h1 className="mt-1 text-xl font-bold">{teacherName}</h1>
-      <p className="text-sm text-teal-100">
+    <div className="border-b border-teal-700 pb-4 text-white">
+      <p className="text-xs font-medium text-teal-200">{date}</p>
+      <h1 className="mt-1 text-lg font-bold leading-tight">{teacherName}</h1>
+      <p className="text-sm text-teal-200">
         {subject} - {grade}
       </p>
     </div>
