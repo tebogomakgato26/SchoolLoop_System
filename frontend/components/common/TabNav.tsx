@@ -6,29 +6,32 @@ import { usePathname } from "next/navigation";
 const tabs = [
   { label: "Attendance", href: "/teacher/attendance" },
   { label: "Marks", href: "/teacher/marks" },
+  { label: "Timetable", href: "/teacher/timetable" },
+  { label: "Alerts", href: "/teacher/alerts" },
+  { label: "High-Risk", href: "/teacher/high-risk" },
 ];
 
 export default function TabNav() {
   const pathname = usePathname();
 
   return (
-    <div className="flex border-b border-slate-200 px-2">
+    <nav className="flex flex-col gap-1">
       {tabs.map((tab) => {
         const active = pathname === tab.href;
         return (
           <Link
             key={tab.href}
             href={tab.href}
-            className={`flex-1 border-b-2 px-3 py-3 text-center text-sm font-semibold transition ${
+            className={`rounded-lg px-4 py-2.5 text-sm font-semibold transition ${
               active
-                ? "border-teal-800 text-teal-800"
-                : "border-transparent text-slate-400 hover:text-slate-600"
+                ? "bg-teal-700 text-white"
+                : "text-teal-100 hover:bg-teal-700/50"
             }`}
           >
             {tab.label}
           </Link>
         );
       })}
-    </div>
+    </nav>
   );
 }
