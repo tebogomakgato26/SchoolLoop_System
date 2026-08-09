@@ -1,3 +1,6 @@
+import Link from "next/link";
+import GetStartedModal from "../../components/GetStartedModal";
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-white">
@@ -23,15 +26,13 @@ export default function Home() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="text-sm text-gray-500 hover:text-gray-900 transition-colors px-4 py-2">
-            Sign in
-          </button>
-          <a
-            href="#portals"
-            className="text-sm font-medium text-white bg-[#0F6E56] px-5 py-2 rounded-full hover:bg-[#1A8F70] transition-colors"
+          <Link
+            href="/login"
+            className="text-sm text-gray-500 hover:text-gray-900 transition-colors px-4 py-2"
           >
-            Get started
-          </a>
+            Sign in
+          </Link>
+          <GetStartedModal />
         </div>
       </nav>
 
@@ -102,7 +103,10 @@ export default function Home() {
               Track your child&apos;s grades, attendance, and stay in touch with
               teachers.
             </p>
-            <button className="text-sm font-semibold text-[#0F6E56] flex items-center gap-1 group-hover:gap-2 transition-all">
+            <Link
+              href="/login?role=parent"
+              className="text-sm font-semibold text-[#0F6E56] flex items-center gap-1 group-hover:gap-2 transition-all"
+            >
               Sign in as Parent
               <svg
                 width="14"
@@ -116,7 +120,7 @@ export default function Home() {
               >
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
-            </button>
+            </Link>
           </div>
 
           {/* Teacher */}
@@ -142,7 +146,10 @@ export default function Home() {
             <p className="text-sm text-gray-600 leading-relaxed mb-5">
               Manage your classes, capture grades, and monitor learner progress.
             </p>
-            <button className="text-sm font-semibold text-[#185FA5] flex items-center gap-1 group-hover:gap-2 transition-all">
+            <Link
+              href="/login?role=teacher"
+              className="text-sm font-semibold text-[#185FA5] flex items-center gap-1 group-hover:gap-2 transition-all"
+            >
               Sign in as Teacher
               <svg
                 width="14"
@@ -156,7 +163,7 @@ export default function Home() {
               >
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
-            </button>
+            </Link>
           </div>
 
           {/* Principal */}
@@ -181,7 +188,10 @@ export default function Home() {
             <p className="text-sm text-gray-600 leading-relaxed mb-5">
               Full school overview — staff, reports, incidents, and approvals.
             </p>
-            <button className="text-sm font-semibold text-[#3C3489] flex items-center gap-1 group-hover:gap-2 transition-all">
+            <Link
+              href="/login?role=principal"
+              className="text-sm font-semibold text-[#3C3489] flex items-center gap-1 group-hover:gap-2 transition-all"
+            >
               Sign in as Principal
               <svg
                 width="14"
@@ -195,7 +205,7 @@ export default function Home() {
               >
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
-            </button>
+            </Link>
           </div>
         </div>
       </section>
