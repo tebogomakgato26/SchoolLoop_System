@@ -16,11 +16,20 @@ export interface ParentAttributes {
   email: string | null;
   idNumber: string; // SA ID number - used to check for duplicates when searching
   relationship: "mother" | "father" | "guardian";
+  // Nullable because parents are created by the principal during
+  // registration, before they have ever logged in themselves. The
+  // registration flow (and the seed script, for parents that predate
+  // this field) sets this to a hash of their ID number as a starting
+  // password.
+  passwordHash: string | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-type ParentCreationAttributes = Optional<ParentAttributes, "id" | "email">;
+type ParentCreationAttributes = Optional<
+  ParentAttributes,
+  "id" | "email" | "passwordHash"
+>;
 
 export class Parent
   extends Model<ParentAttributes, ParentCreationAttributes>
@@ -32,6 +41,7 @@ export class Parent
   public email!: string | null;
   public idNumber!: string;
   public relationship!: "mother" | "father" | "guardian";
+  public passwordHash!: string | null;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -66,6 +76,11 @@ Parent.init(
     relationship: {
       type: DataTypes.ENUM("mother", "father", "guardian"),
       allowNull: false,
+    },
+    passwordHash: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      field: "password_hash",
     },
   },
   {

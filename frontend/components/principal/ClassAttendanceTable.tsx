@@ -38,11 +38,7 @@ export default function ClassAttendanceTable({ data }: { data: ClassAttendance[]
             <td className="py-2.5 text-right text-gray-700 tabular-nums">{c.present}</td>
             <td className="py-2.5 text-right text-gray-700 tabular-nums">{c.absent}</td>
             <td className="py-2.5 text-right">
-              <span
-                className={`text-xs font-semibold px-2 py-0.5 rounded-full ${badgeStyle(
-                  c.percentage
-                )}`}
-              >
+              <span className={"text-xs font-semibold px-2 py-0.5 rounded-full " + badgeStyle(c.percentage)}>
                 {c.percentage}%
               </span>
             </td>

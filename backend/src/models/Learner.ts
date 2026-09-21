@@ -15,9 +15,10 @@ export interface LearnerAttributes {
   dateOfBirth: string; // YYYY-MM-DD
   gender: "male" | "female";
   grade: string; // e.g. "Grade 9"
-  className: string | null; // e.g. "9A" - adjust once you link to a real Class table
+  className: string | null; // e.g. "9A" - denormalized label, kept for quick display
   admissionNumber: string;
   parentId: string; // FK -> Parent.id
+  classId: string | null; // FK -> Class.id - nullable since a learner can be registered before being assigned a class
   atRiskStatus: "none" | "medium" | "high";
   createdAt?: Date;
   updatedAt?: Date;
@@ -25,7 +26,7 @@ export interface LearnerAttributes {
 
 type LearnerCreationAttributes = Optional<
   LearnerAttributes,
-  "id" | "className" | "atRiskStatus"
+  "id" | "className" | "classId" | "atRiskStatus"
 >;
 
 export class Learner
@@ -40,6 +41,7 @@ export class Learner
   public className!: string | null;
   public admissionNumber!: string;
   public parentId!: string;
+  public classId!: string | null;
   public atRiskStatus!: "none" | "medium" | "high";
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -89,6 +91,15 @@ Learner.init(
         model: Parent,
         key: "id",
       },
+    },
+    classId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      field: "class_id",
+      // References Class, but that import isn't added here to avoid a
+      // circular import (Class doesn't need to know about Learner directly).
+      // The FK constraint itself is set up via association in Attendance.ts
+      // and Class.ts instead - see Class.hasMany(Learner) below.
     },
     atRiskStatus: {
       type: DataTypes.ENUM("none", "medium", "high"),
