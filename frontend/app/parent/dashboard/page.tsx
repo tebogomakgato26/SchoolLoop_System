@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -18,8 +17,6 @@ const subjects = [
     id: 1,
     name: "Mathematics",
     icon: Calculator,
-    score: 78,
-    color: "bg-teal-500",
     iconBg: "bg-teal-100",
     iconColor: "text-teal-600",
   },
@@ -27,8 +24,6 @@ const subjects = [
     id: 2,
     name: "English",
     icon: BookOpen,
-    score: 65,
-    color: "bg-purple-500",
     iconBg: "bg-purple-100",
     iconColor: "text-purple-600",
   },
@@ -36,8 +31,6 @@ const subjects = [
     id: 3,
     name: "Science",
     icon: FlaskConical,
-    score: 54,
-    color: "bg-orange-500",
     iconBg: "bg-orange-100",
     iconColor: "text-orange-600",
   },
@@ -47,406 +40,470 @@ export default function ParentDashboardPage() {
   const [tab, setTab] = useState("home");
 
   return (
-    <main className="min-h-screen bg-[#E9E9EF] p-6">
+  <main className="min-h-screen bg-gray-100">
 
-      <div className="mx-auto max-w-6xl overflow-hidden rounded-[30px] bg-gray-100 shadow-xl">
+  <div className="flex min-h-screen">
 
-        {/* ================= HEADER ================= */}
+    {/* ================= SIDEBAR ================= */}
 
-        <div className="bg-[#6C5CE7] px-10 py-8">
+    <aside className="w-72 bg-[#5B4CF0] text-white flex flex-col">
 
-       <div className="flex items-center justify-between">
+      <div className="p-8">
 
-      <div>
+        <h1 className="text-3xl font-bold">
+          SchoolLoop
+        </h1>
 
-       <p className="text-sm text-white/80">
-         Good Morning,
+        <p className="mt-2 text-white/70">
+          Parent Portal
         </p>
 
-        <h1 className="mt-1 text-4xl font-bold text-white">
-         Mrs Mokoena
-       </h1>
-
-      <p className="mt-3 text-white/90">
-       Monitor your child's academic progress.
-      </p>
-
-       </div>
-
-      <button className="rounded-full bg-white/20 p-4 hover:bg-white/30">
-
-       <Bell className="h-6 w-6 text-white" />
-
-      </button>
-
-       </div>
-
-        </div>
-
-        {/* ================= CONTENT ================= */}
-
-        <div className="p-10">
-
-              {/* ================= STUDENT SUMMARY ================= */}
-
-      <div className="rounded-2xl bg-white p-6 shadow-md">
-
-       <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
-
-      <div className="flex items-center gap-5">
-
-      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#6C5CE7] text-2xl font-bold text-white">
-        TM
       </div>
 
-      <div>
-
-      <h2 className="text-2xl font-bold text-gray-800">
-      Thabo Mokoena
-       </h2>
-
-      <p className="mt-1 text-gray-500">
-       Grade 9A • Term 2
-       </p>
-
-       </div>
-
-       </div>
-
-      <div className="grid grid-cols-2 gap-4">
-
-       <div className="rounded-xl bg-gray-50 px-8 py-5 text-center">
-
-         <p className="text-3xl font-bold text-[#6C5CE7]">
-         87%
-        </p>
-
-        <p className="mt-1 text-sm text-gray-500">
-         Attendance
-         </p>
-
-         </div>
-
-        <div className="rounded-xl bg-gray-50 px-8 py-5 text-center">
-
-        <p className="text-3xl font-bold text-[#6C5CE7]">
-        71%
-        </p>
-
-      <p className="mt-1 text-sm text-gray-500">
-          Term Average
-       </p>
-
-       </div>
-
-       </div>
-
-       </div>
-
-       </div>
-
-          {/* ================= NAVIGATION ================= */}
-
-      <div className="mt-8 flex flex-wrap gap-4">
+      <nav className="flex-1 px-5 space-y-3">
 
         <button
           onClick={() => setTab("home")}
-            className={`flex items-center rounded-xl px-6 py-3 font-semibold ${
+          className={`w-full flex items-center gap-4 rounded-xl px-5 py-4 transition ${
             tab === "home"
-            ? "bg-[#6C5CE7] text-white"
-             : "bg-white text-gray-700 shadow"
-       }`}
+              ? "bg-white text-[#5B4CF0]"
+              : "text-white hover:bg-white/10"
+          }`}
         >
-       <Home className="mr-2 h-5 w-5" />
-         Home
+          <Home className="h-5 w-5" />
+          Dashboard
         </button>
 
         <button
           onClick={() => setTab("marks")}
-          className={`flex items-center rounded-xl px-6 py-3 font-semibold ${
-          tab === "marks"
-          ? "bg-[#6C5CE7] text-white"
-          : "bg-white text-gray-700 shadow"
-      }`}
+          className={`w-full flex items-center gap-4 rounded-xl px-5 py-4 transition ${
+            tab === "marks"
+              ? "bg-white text-[#5B4CF0]"
+              : "text-white hover:bg-white/10"
+          }`}
         >
-       <BarChart2 className="mr-2 h-5 w-5" />
-       Marks
-      </button>
-
-            <button
-         onClick={() => setTab("exams")}
-        className={`flex items-center rounded-xl px-6 py-3 font-semibold ${
-        tab === "exams"
-        ? "bg-[#6C5CE7] text-white"
-       : "bg-white text-gray-700 shadow"
-      }`}
-      >
-    <Calendar className="mr-2 h-5 w-5" />
-       Exams
-       </button>
+          <BarChart2 className="h-5 w-5" />
+          Marks
+        </button>
 
         <button
-           onClick={() => setTab("profile")}
-           className={`flex items-center rounded-xl px-6 py-3 font-semibold ${
-           tab === "profile"
-            ? "bg-[#6C5CE7] text-white"
-           : "bg-white text-gray-700 shadow"
-       }`}
-      >
-      <User className="mr-2 h-5 w-5" />
-      Profile
-      </button>
+          onClick={() => setTab("exams")}
+          className={`w-full flex items-center gap-4 rounded-xl px-5 py-4 transition ${
+            tab === "exams"
+              ? "bg-white text-[#5B4CF0]"
+              : "text-white hover:bg-white/10"
+          }`}
+        >
+          <Calendar className="h-5 w-5" />
+          Exams
+        </button>
 
-      </div>  
-               {/* ================= HOME ================= */}
+        <button
+          onClick={() => setTab("profile")}
+          className={`w-full flex items-center gap-4 rounded-xl px-5 py-4 transition ${
+            tab === "profile"
+              ? "bg-white text-[#5B4CF0]"
+              : "text-white hover:bg-white/10"
+          }`}
+        >
+          <User className="h-5 w-5" />
+          Profile
+        </button>
 
-        {tab === "home" && (
+      </nav>
 
-      <div className="mt-8 space-y-6">
+    </aside>
 
-      <div className="rounded-2xl bg-white p-6 shadow-md">
+    {/* ================= MAIN CONTENT ================= */}
 
-      <h2 className="text-2xl font-bold text-gray-800">
-       Subject Performance
-       </h2>
-
-       <p className="mt-2 text-gray-500">
-        View your child's latest academic progress.
-       </p>
-
-       <div className="mt-8 space-y-5">
-
-      {subjects.map((subject) => {
-
-      const Icon = subject.icon;
-
-      return (
-
-       <div
-       key={subject.id}
-       className="rounded-xl border border-gray-200 p-5 transition hover:border-[#6C5CE7] hover:shadow-md"
-      >
+    <section className="flex-1 p-10">
 
       <div className="flex items-center justify-between">
 
-      <div className="flex items-center gap-4">
-      <div
-      className={`flex h-14 w-14 items-center justify-center rounded-xl ${subject.iconBg}`}
-      >
+        <div>
 
-      <Icon
-       className={`h-7 w-7 ${subject.iconColor}`}
-        />
+          <h1 className="text-4xl font-bold text-gray-900">
+            Welcome back, Mrs Mokoena
+          </h1>
 
-      </div>
-
-      <div>
-
-      <h3 className="text-lg font-semibold text-gray-800">
-      {subject.name}
-      </h3>
-       <p className="text-sm text-gray-500">
-       Current Performance
-      </p>
-
-      </div>
-
-      </div> 
-
-      </div>
-
-      <div className="mt-5 h-3 overflow-hidden rounded-full bg-gray-200">
-       <div
-        className={`${subject.color} h-3 rounded-full`}
-        style={{ width: `${subject.score}%` }}
-         />
-
-       </div>
+          <p className="mt-2 text-gray-500">
+            Monitor your child's academic progress.
+          </p>
 
         </div>
 
-            );
+        <button className="rounded-full bg-white p-4 shadow">
 
-          })}
+          <Bell className="h-6 w-6 text-[#5B4CF0]" />
 
-     </div>
+        </button>
 
-     </div>
+      </div>  
+        {/* ================= STUDENT SUMMARY ================= */}
 
-      <div className="rounded-2xl bg-white p-6 shadow-md">
-      <h2 className="text-xl font-bold text-gray-800">
-        Recent Notifications
-      </h2>
+      <div className="mt-10 rounded-2xl bg-white p-8 shadow">
 
-      <div className="mt-8 rounded-xl border border-dashed border-gray-300 py-12 text-center">
+        <div className="flex items-center justify-between">
 
-      <Bell className="mx-auto h-10 w-10 text-gray-300" />
+          <div className="flex items-center gap-6">
 
-      <p className="mt-4 text-gray-500">
-      No notifications available.
-      </p>
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#5B4CF0] text-2xl font-bold text-white">
+              TM
+            </div>
 
-       </div>
+            <div>
 
-       </div>
+              <h2 className="text-3xl font-bold text-gray-800">
+                Thabo Mokoena
+              </h2>
 
-       </div>
+              <p className="mt-1 text-gray-500">
+                Grade 9A • Term 2
+              </p>
 
-        )}
-             {/* ================= MARKS ================= */}
+            </div>
 
-        {tab === "marks" && (
+          </div>
 
-        <div className="mt-8 rounded-2xl bg-white p-6 shadow-md">
-        <h2 className="text-2xl font-bold text-gray-800">
-          Academic Results
-          </h2>
-          <p className="mt-2 text-gray-500">
-          Current subject performance.
-          </p>
+          <div className="grid grid-cols-2 gap-6">
+
+            <div className="rounded-xl bg-gray-50 px-10 py-6 text-center">
+
+              <p className="text-4xl font-bold text-[#5B4CF0]">
+                87%
+              </p>
+
+              <p className="mt-2 text-gray-500">
+                Attendance
+              </p>
+
+            </div>
+
+            <div className="rounded-xl bg-gray-50 px-10 py-6 text-center">
+
+              <p className="text-4xl font-bold text-[#5B4CF0]">
+                71%
+              </p>
+
+              <p className="mt-2 text-gray-500">
+                Term Average
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+          {/* ================= HOME ================= */}
+
+      {tab === "home" && (
+
+        <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-2">
+
+          {/* Subject Performance */}
+
+          <div className="rounded-2xl bg-white p-8 shadow">
+
+            <h2 className="text-2xl font-bold text-gray-800">
+              Subject Performance
+            </h2>
+
+            <p className="mt-2 text-gray-500">
+              View your child's enrolled subjects.
+            </p>
+<div className="mt-8">
+
+  {subjects.map((subject) => {
+
+    const Icon = subject.icon;
+
+    return (
+
+      <div
+        key={subject.id}
+        className="flex items-center justify-between border-b border-gray-200 py-5"
+      >
+
+        <div className="flex items-center gap-5">
+
+          <div
+            className={`flex h-14 w-14 items-center justify-center rounded-xl ${subject.iconBg}`}
+          >
+            <Icon className={`h-7 w-7 ${subject.iconColor}`} />
+          </div>
+
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800">
+              {subject.name}
+            </h3>
+          </div>
+
+        </div>
+
+      </div>
+
+    );
+
+  })}
+
+  <button className="mt-6 flex w-full items-center justify-between text-lg font-semibold text-[#5B4CF0] hover:text-[#4338CA]">
+
+    <span>View all subjects</span>
+
+    <span className="text-3xl">›</span>
+
+  </button>
+
+</div>
+
+          </div>
+
+          {/* Notifications */}
+
+          <div className="rounded-2xl bg-white p-8 shadow">
+
+            <h2 className="text-2xl font-bold text-gray-800">
+              Recent Notifications
+            </h2>
+
+            <div className="mt-8 rounded-xl border border-dashed border-gray-300 py-20 text-center">
+
+              <Bell className="mx-auto h-12 w-12 text-gray-300" />
+
+              <h3 className="mt-4 text-xl font-semibold text-gray-700">
+                No new notifications
+              </h3>
+
+              <p className="mt-2 text-gray-500">
+                You're all caught up!
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      )}    
+        {/* ================= MARKS ================= */}
+
+      {tab === "marks" && (
+
+        <div className="mt-10 rounded-2xl bg-white p-8 shadow">
+
+          <div className="flex items-center justify-between">
+
+            <div>
+
+              <h2 className="text-3xl font-bold text-gray-800">
+                Academic Results
+              </h2>
+
+              <p className="mt-2 text-gray-500">
+                Latest performance by subject.
+              </p>
+
+            </div>
+
+          </div>
 
           <div className="mt-8 overflow-hidden rounded-xl border border-gray-200">
 
-          <table className="w-full">
+            <table className="w-full">
 
-          <thead className="bg-gray-100">
+              <thead className="bg-gray-100">
 
-          <tr>
+                <tr>
 
-         <th className="px-6 py-4 text-left">
-           Subject
-          </th>
+                  <th className="px-6 py-4 text-left font-semibold">
+                    Subject
+                  </th>
 
-          <th className="px-6 py-4 text-left">
-           Mark
-          </th>
+                  <th className="px-6 py-4 text-left font-semibold">
+                    Teacher
+                  </th>
 
-         <th className="px-6 py-4 text-left">
-         Status
-         </th>
+                  <th className="px-6 py-4 text-left font-semibold">
+                    Status
+                  </th>
 
-       </tr>
-        </thead>
+                </tr>
 
-        <tbody>
+              </thead>
 
-        {subjects.map((subject) => (
+              <tbody>
 
-        <tr
-         key={subject.id}
-         className="border-t"
-          >
-          <td className="px-6 py-4">
-           {subject.name}
-           </td>
-          <td className="px-6 py-4 font-semibold text-[#6C5CE7]">
-           {subject.score}%
-          </td>
+                {subjects.map((subject) => (
 
-          <td className="px-6 py-4">
+                  <tr
+                    key={subject.id}
+                    className="border-t hover:bg-gray-50"
+                  >
 
-          <span className="rounded-full bg-green-100 px-3 py-1 text-sm text-green-700">
-           Progressing
-          </span>
+                    <td className="px-6 py-5">
 
-          </td>
+                      <div className="flex items-center gap-4">
 
-          </tr>
+                        <div
+                          className={`flex h-12 w-12 items-center justify-center rounded-lg ${subject.iconBg}`}
+                        >
 
-          ))}
+                          <subject.icon
+                            className={`h-6 w-6 ${subject.iconColor}`}
+                          />
 
-         </tbody>
+                        </div>
 
-         </table>
+                        <span className="font-medium">
+                          {subject.name}
+                        </span>
 
-         </div>
+                      </div>
 
-         </div>
+                    </td>
 
-        )}
-          {/* ================= EXAMS ================= */}
+                    <td className="px-6 py-5 text-gray-600">
+                      Mrs Smith
+                    </td>
 
-        {tab === "exams" && (
+                    <td className="px-6 py-5">
 
-          <div className="mt-8 rounded-2xl bg-white p-10 text-center shadow-md">
+                      <span className="rounded-full bg-green-100 px-4 py-2 text-sm font-medium text-green-700">
+                        Progressing
+                      </span>
+
+                    </td>
+
+                  </tr>
+
+                ))}
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      )}
+        {/* ================= EXAMS ================= */}
+
+      {tab === "exams" && (
+
+        <div className="mt-10 rounded-2xl bg-white p-8 shadow">
+
+          <h2 className="text-3xl font-bold text-gray-800">
+            Upcoming Exams
+          </h2>
+
+          <p className="mt-2 text-gray-500">
+            Examination timetable.
+          </p>
+
+          <div className="mt-8 rounded-xl border border-dashed border-gray-300 py-20 text-center">
 
             <Calendar className="mx-auto h-14 w-14 text-gray-300" />
 
-            <h2 className="mt-5 text-2xl font-bold text-gray-800">
-              Upcoming Exams
-            </h2>
+            <h3 className="mt-4 text-xl font-semibold text-gray-700">
+              No Exams Scheduled
+            </h3>
 
-            <p className="mt-3 text-gray-500">
-              No exam information available.
+            <p className="mt-2 text-gray-500">
+              Your child's upcoming exams will appear here.
             </p>
 
           </div>
 
-        )}
-
-        {/* ================= PROFILE ================= */}
-
-        {tab === "profile" && (
-
-          <div className="mt-8 rounded-2xl bg-white p-6 shadow-md">
-
-            <h2 className="text-2xl font-bold text-gray-800">
-              Parent Profile
-            </h2>
-
-            <div className="mt-8 space-y-5">
-            <div>
-            <p className="text-sm text-gray-500">
-             Parent Name
-            </p>
-            <p className="font-semibold text-gray-800">
-               Mrs Mokoena
-             </p>
-            </div>
-            <div>
-            <p className="text-sm text-gray-500">
-              Learner
-             </p>
-             <p className="font-semibold text-gray-800">
-             Thabo Mokoena
-             </p>
-            </div>
-            <div>
-            <p className="text-sm text-gray-500">
-             Grade
-            </p>
-            <p className="font-semibold text-gray-800">
-            Grade 9A
-           </p>
-           </div>
-           <div>
-          <p className="text-sm text-gray-500">
-           Email
-          </p>
-          <p className="font-semibold text-gray-800">
-          parent@email.com
-         </p>
         </div>
-        <div>
-        <p className="text-sm text-gray-500">
-        Phone
-       </p>
-       <p className="font-semibold text-gray-800">
-      +27 71 234 5678
-     </p>
 
-     </div>
+      )}
 
-     </div>
+      {/* ================= PROFILE ================= */}
 
-    </div>
+      {tab === "profile" && (
 
-   )}
-      </div>
+        <div className="mt-10 rounded-2xl bg-white p-8 shadow">
 
-    </div>
+          <h2 className="text-3xl font-bold text-gray-800">
+            Parent Profile
+          </h2>
 
-  </main>
+          <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+
+            <div>
+
+              <p className="text-sm text-gray-500">
+                Parent Name
+              </p>
+
+              <p className="mt-1 font-semibold text-gray-800">
+                Mrs Mokoena
+              </p>
+
+            </div>
+
+            <div>
+
+              <p className="text-sm text-gray-500">
+                Learner
+              </p>
+
+              <p className="mt-1 font-semibold text-gray-800">
+                Thabo Mokoena
+              </p>
+
+            </div>
+
+            <div>
+
+              <p className="text-sm text-gray-500">
+                Grade
+              </p>
+
+              <p className="mt-1 font-semibold text-gray-800">
+                Grade 9A
+              </p>
+
+            </div>
+
+            <div>
+
+              <p className="text-sm text-gray-500">
+                Email
+              </p>
+
+              <p className="mt-1 font-semibold text-gray-800">
+                parent@email.com
+              </p>
+
+            </div>
+
+            <div>
+
+              <p className="text-sm text-gray-500">
+                Phone
+              </p>
+
+              <p className="mt-1 font-semibold text-gray-800">
+                +27 71 234 5678
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      )}
+
+    </section>
+
+  </div>
+
+</main>
 
 );
 
