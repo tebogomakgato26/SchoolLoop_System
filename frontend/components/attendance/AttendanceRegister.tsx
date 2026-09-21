@@ -1,30 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { Learner, Status } from "@/types/attendance";
+import { useLearners } from "@/lib/context/LearnerContext";
 import AttendanceSummary from "@/components/attendance/AttendanceSummary";
 import LearnerRow from "@/components/attendance/LearnerRow";
 import SaveButton from "@/components/attendance/SaveButton";
 
-const initialLearners: Learner[] = [
-  { id: "1", name: "Amanhle Dube", status: "present" },
-  { id: "2", name: "Sipho Ndlovu", status: "present" },
-  { id: "3", name: "Lerato Khumalo", status: "present" },
-  { id: "4", name: "Nandi Cele", status: "present" },
-];
-
 export default function AttendanceRegister() {
-  const [learners, setLearners] = useState<Learner[]>(initialLearners);
+  const { learners, setAttendanceStatus } = useLearners();
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  const presentCount = learners.filter((l) => l.status === "present").length;
-  const absentCount = learners.filter((l) => l.status === "absent").length;
+  const presentCount = learners.filter((l) => l.todayStatus === "present").length;
+  const absentCount = learners.filter((l) => l.todayStatus === "absent").length;
 
-  const handleStatusChange = (id: string, status: Status) => {
-    setLearners((prev) =>
-      prev.map((l) => (l.id === id ? { ...l, status } : l))
-    );
+  const handleStatusChange = (id: string, status: "present" | "absent") => {
+    setAttendanceStatus(id, status);
     setSaved(false);
   };
 
@@ -43,7 +34,7 @@ export default function AttendanceRegister() {
         {learners.map((learner) => (
           <LearnerRow
             key={learner.id}
-            learner={learner}
+            learner={{ id: learner.id, name: learner.name, status: learner.todayStatus }}
             onStatusChange={handleStatusChange}
           />
         ))}

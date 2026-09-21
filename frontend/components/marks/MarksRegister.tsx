@@ -1,26 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Mark } from "@/types/marks";
+import { useLearners } from "@/lib/context/LearnerContext";
 import MarkRow from "@/components/marks/MarkRow";
 import SaveMarksButton from "@/components/marks/SaveMarksButton";
 
-const initialMarks: Mark[] = [
-  { id: "1", learnerName: "Amanhle Dube", subject: "Mathematics", score: 82 },
-  { id: "2", learnerName: "Sipho Ndlovu", subject: "Mathematics", score: 67 },
-  { id: "3", learnerName: "Lerato Khumalo", subject: "Mathematics", score: 91 },
-  { id: "4", learnerName: "Nandi Cele", subject: "Mathematics", score: 74 },
-];
-
 export default function MarksRegister() {
-  const [marks, setMarks] = useState<Mark[]>(initialMarks);
+  const { learners, setScore } = useLearners();
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
   const handleScoreChange = (id: string, score: number) => {
-    setMarks((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, score } : m))
-    );
+    setScore(id, score);
     setSaved(false);
   };
 
@@ -40,8 +31,12 @@ export default function MarksRegister() {
       </div>
 
       <ul className="divide-y divide-slate-100">
-        {marks.map((mark) => (
-          <MarkRow key={mark.id} mark={mark} onScoreChange={handleScoreChange} />
+        {learners.map((learner) => (
+          <MarkRow
+            key={learner.id}
+            mark={{ id: learner.id, learnerName: learner.name, subject: "Mathematics", score: learner.averageScore }}
+            onScoreChange={handleScoreChange}
+          />
         ))}
       </ul>
 
