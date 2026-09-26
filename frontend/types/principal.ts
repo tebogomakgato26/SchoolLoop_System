@@ -1,55 +1,41 @@
 // frontend/types/principal.ts
+//
+// This adds registration-related types to your existing file.
+// Merge these additions in alongside whatever's already there
+// (AttendanceSummary, ClassAttendance, AtRiskLearner, etc.) —
+// don't delete your existing types, just add these.
 
-export interface AttendanceSummary {
-  present: number;
-  absent: number;
-  late: number;
-  total: number;
-  isLive: boolean;
+export type Relationship = "mother" | "father" | "guardian";
+
+export interface ParentRecord {
+  id: string;
+  fullName: string;
+  phoneNumber: string;
+  email: string | null;
+  idNumber: string;
+  relationship: Relationship;
+  learners?: { id: string; fullName: string; grade: string }[];
 }
 
-export interface ClassAttendance {
-  id: string;
-  className: string; // e.g. "Grade 9A - Mathematics"
-  teacherName: string; // e.g. "Ms Dlamini"
-  present: number;
-  absent: number;
-  late: number;
-  percentage: number; // e.g. 94
+export interface NewParentInput {
+  fullName: string;
+  phoneNumber: string;
+  email: string;
+  idNumber: string;
+  relationship: Relationship;
 }
 
-export type RiskLevel = "high" | "medium";
-
-export interface AtRiskLearner {
-  id: string;
-  name: string;
-  grade: string; // e.g. "Grade 10B"
-  riskLevel: RiskLevel;
-  daysAbsentRecent: number; // e.g. 8
-  daysWindow: number; // e.g. 10 -> "8 of last 10 days"
-  termAverage: number; // e.g. 34
-  flaggedReason: string; // e.g. "Chronic absence + declining marks"
-}
-
-export type Trend = "up" | "down" | "stable";
-
-export interface SubjectPerformance {
-  id: string;
-  subjectName: string; // e.g. "Mathematics"
-  grade: string; // e.g. "Grade 9A"
-  averageMark: number; // e.g. 68
-  trend: Trend;
-  trendValue: number; // e.g. 4 (percentage points changed since last term)
-}
-
-export type ExamStatus = "draft" | "published";
-
-export interface ExamTimetableEntry {
-  id: string;
-  subject: string;
+export interface NewLearnerInput {
+  fullName: string;
+  dateOfBirth: string; // YYYY-MM-DD
+  gender: "male" | "female";
   grade: string;
-  date: string; // e.g. "2026-08-04"
-  time: string; // e.g. "09:00 - 11:00"
-  venue: string;
-  status: ExamStatus;
+  className: string;
+  admissionNumber: string;
+}
+
+export interface RegisterLearnerPayload {
+  learner: NewLearnerInput;
+  parentId?: string;
+  newParent?: NewParentInput;
 }
