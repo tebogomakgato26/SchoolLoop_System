@@ -5,6 +5,7 @@ import { useState } from "react";
 import { CheckCircle2 } from "lucide-react";
 import PageHeader from "@/components/principal/PageHeader";
 import ParentSearchPanel from "@/components/principal/ParentSearchPanel";
+import { authFetch } from "@/lib/auth";
 import {
   ParentRecord,
   NewParentInput,
@@ -52,7 +53,7 @@ export default function RegisterLearnerPage() {
 
     setSubmitting(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/principal/learners/register`, {
+      const res = await authFetch("/principal/learners/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -95,7 +96,6 @@ export default function RegisterLearnerPage() {
           </div>
         )}
 
-        {/* Step 1: Parent */}
         <div className="bg-white rounded-xl border border-gray-100 p-5 mb-6">
           <h2 className="text-sm font-bold text-gray-900 mb-1">Parent / Guardian</h2>
           <p className="text-xs text-gray-500 mb-4">
@@ -110,7 +110,6 @@ export default function RegisterLearnerPage() {
           />
         </div>
 
-        {/* Step 2: Learner details */}
         <div className="bg-white rounded-xl border border-gray-100 p-5 mb-6">
           <h2 className="text-sm font-bold text-gray-900 mb-4">Learner Details</h2>
 

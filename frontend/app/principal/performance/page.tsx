@@ -8,6 +8,7 @@ import KpiCard from "@/components/principal/KpiCard";
 import SubjectChart from "@/components/principal/SubjectChart";
 import SubjectPerformanceTable from "@/components/principal/SubjectPerformanceTable";
 import TrendingPanel from "@/components/principal/TrendingPanel";
+import { authFetch } from "@/lib/auth";
 import { SubjectPerformance } from "@/types/principal";
 
 export default function PerformancePage() {
@@ -18,7 +19,7 @@ export default function PerformancePage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/principal/performance`);
+        const res = await authFetch("/principal/performance");
         if (!res.ok) throw new Error("Backend responded with an error.");
         setSubjects(await res.json());
         setError(null);
@@ -58,7 +59,6 @@ export default function PerformancePage() {
           </p>
         ) : (
           <>
-            {/* KPI row */}
             <div className="flex gap-4 mb-6">
               <KpiCard
                 label="School Average"
@@ -76,7 +76,6 @@ export default function PerformancePage() {
               />
             </div>
 
-            {/* Main grid: chart + table (wide) / trending panel (narrow) */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 bg-white rounded-xl border border-gray-100 p-5">
                 <h2 className="text-sm font-bold text-gray-900 mb-4">By Subject &amp; Class</h2>

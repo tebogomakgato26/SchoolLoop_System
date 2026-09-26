@@ -6,6 +6,7 @@ import { AlertTriangle, AlertCircle, Users } from "lucide-react";
 import PageHeader from "@/components/principal/PageHeader";
 import KpiCard from "@/components/principal/KpiCard";
 import AtRiskTable from "@/components/principal/AtRiskTable";
+import { authFetch } from "@/lib/auth";
 import { AtRiskLearner, RiskLevel } from "@/types/principal";
 
 type FilterOption = "all" | RiskLevel;
@@ -19,7 +20,7 @@ export default function AlertsPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/principal/at-risk");
+        const res = await authFetch("/principal/at-risk");
         if (!res.ok) throw new Error("Backend responded with an error.");
         setLearners(await res.json());
         setError(null);

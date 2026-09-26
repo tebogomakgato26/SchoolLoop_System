@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import PageHeader from "@/components/principal/PageHeader";
 import ExamTimetableTable from "@/components/principal/ExamTimetableTable";
+import { authFetch } from "@/lib/auth";
 import { ExamTimetableEntry } from "@/types/principal";
 
 const emptyForm = {
@@ -26,7 +27,7 @@ export default function TimetablePage() {
 
   async function fetchExams() {
     try {
-      const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/principal/timetable");
+      const res = await authFetch("/principal/timetable");
       if (!res.ok) throw new Error("Backend responded with an error.");
       setExams(await res.json());
       setError(null);
@@ -47,9 +48,7 @@ export default function TimetablePage() {
   async function handlePublishAll() {
     setPublishing(true);
     try {
-      const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/principal/timetable/publish", {
-        method: "POST",
-      });
+      const res = await authFetch("/principal/timetable/publish", { method: "POST" });
       if (!res.ok) throw new Error("Publish failed.");
       await fetchExams();
     } catch (err) {
@@ -65,7 +64,7 @@ export default function TimetablePage() {
 
     setSaving(true);
     try {
-      const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/principal/timetable", {
+      const res = await authFetch("/principal/timetable", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

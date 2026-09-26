@@ -8,6 +8,7 @@ import KpiCard from "@/components/principal/KpiCard";
 import AttendanceChart from "@/components/principal/AttendanceChart";
 import ClassAttendanceTable from "@/components/principal/ClassAttendanceTable";
 import AtRiskPanel from "@/components/principal/AtRiskPanel";
+import { authFetch } from "@/lib/auth";
 import {
   AttendanceSummary,
   ClassAttendance,
@@ -33,9 +34,9 @@ export default function PrincipalDashboardPage() {
     async function fetchData() {
       try {
         const [summaryRes, classesRes, atRiskRes] = await Promise.all([
-          fetch(process.env.NEXT_PUBLIC_API_URL + "/principal/attendance/summary"),
-          fetch(process.env.NEXT_PUBLIC_API_URL + "/principal/attendance/by-class"),
-          fetch(process.env.NEXT_PUBLIC_API_URL + "/principal/at-risk"),
+          authFetch("/principal/attendance/summary"),
+          authFetch("/principal/attendance/by-class"),
+          authFetch("/principal/at-risk"),
         ]);
 
         if (!summaryRes.ok || !classesRes.ok || !atRiskRes.ok) {

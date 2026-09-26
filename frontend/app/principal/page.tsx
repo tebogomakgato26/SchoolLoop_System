@@ -1,4 +1,4 @@
-// frontend/app/teacher/page.tsx
+// frontend/app/principal/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Mail, Lock, Eye } from "lucide-react";
 import { login } from "@/lib/auth";
 
-export default function TeacherPage() {
+export default function PrincipalLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,11 +20,11 @@ export default function TeacherPage() {
     setLoading(true);
     try {
       const session = await login(email, password);
-      if (session.role !== "teacher") {
-        setError("This login is for teachers only.");
+      if (session.role !== "principal") {
+        setError("This login is for principals only.");
         return;
       }
-      router.push("/teacher/home");
+      router.push("/principal/dashboard");
     } catch (err: any) {
       setError(err.message || "Login failed.");
     } finally {
@@ -35,27 +35,23 @@ export default function TeacherPage() {
   return (
     <main className="min-h-screen bg-[#E9E9EF] p-4">
       <div className="min-h-[calc(100vh-32px)] rounded-[35px] border border-gray-200 bg-gray-100 shadow-xl">
-        {/* Header */}
-
-        <div className="rounded-t-[4px] bg-[#0F766E] px-10 py-8 text-center">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#115E59] shadow-xl">
+        <div className="rounded-t-[4px] bg-[#191340] px-10 py-8 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#2A2260] shadow-xl">
             <span className="text-xl font-bold text-white">SL</span>
           </div>
 
           <h1 className="mt-3 text-3xl font-bold text-white">SchoolLoop</h1>
 
           <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-white/90">
-            Manage attendance, capture marks, communicate with parents, and help
-            learners succeed every day.
+            Full school overview: staff, reports, incidents, and approvals,
+            all in one place.
           </p>
 
           <div className="mt-4 inline-flex items-center rounded-full bg-white/20 px-6 py-2 text-sm font-semibold text-white">
             <span className="mr-3 h-3 w-3 rounded-full bg-white"></span>
-            Teacher Portal
+            Principal Portal
           </div>
         </div>
-
-        {/* Form */}
 
         <div className="w-full px-10 py-12 lg:px-24">
           <div className="mx-auto max-w-xl">
@@ -73,19 +69,15 @@ export default function TeacherPage() {
               </div>
             )}
 
-            {/* Email */}
-
             <div className="mt-10">
               <label className="mb-2 block text-base font-medium text-gray-700">
                 Email Address
               </label>
-
-              <div className="flex items-center rounded-xl border border-gray-300 bg-gray-50 px-5 transition focus-within:border-[#0F766E]">
+              <div className="flex items-center rounded-xl border border-gray-300 bg-gray-50 px-5 transition focus-within:border-[#191340]">
                 <Mail className="h-5 w-5 text-gray-400" />
-
                 <input
                   type="email"
-                  placeholder="teacher@schoolloop.com"
+                  placeholder="principal@schoolloop.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-transparent px-4 py-4 text-base outline-none"
@@ -93,16 +85,12 @@ export default function TeacherPage() {
               </div>
             </div>
 
-            {/* Password */}
-
             <div className="mt-7">
               <label className="mb-2 block text-base font-medium text-gray-700">
                 Password
               </label>
-
-              <div className="flex items-center rounded-xl border border-gray-300 bg-gray-50 px-5 transition focus-within:border-[#0F766E]">
+              <div className="flex items-center rounded-xl border border-gray-300 bg-gray-50 px-5 transition focus-within:border-[#191340]">
                 <Lock className="h-5 w-5 text-gray-400" />
-
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="********"
@@ -111,10 +99,9 @@ export default function TeacherPage() {
                   onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                   className="w-full bg-transparent px-4 py-4 text-base outline-none"
                 />
-
                 <Eye
                   onClick={() => setShowPassword((s) => !s)}
-                  className="h-5 w-5 cursor-pointer text-gray-400 hover:text-[#0F766E]"
+                  className="h-5 w-5 cursor-pointer text-gray-400 hover:text-[#191340]"
                 />
               </div>
             </div>
@@ -122,31 +109,31 @@ export default function TeacherPage() {
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="mt-10 w-full rounded-xl bg-[#0F766E] py-4 text-lg font-semibold text-white transition duration-300 hover:bg-[#115E59] hover:shadow-lg disabled:opacity-50"
+              className="mt-10 w-full rounded-xl bg-[#191340] py-4 text-lg font-semibold text-white transition duration-300 hover:bg-[#2A2260] hover:shadow-lg disabled:opacity-50"
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
 
-            <div className="mt-5 text-center">
-              <button className="text-base font-medium text-[#0F766E] hover:underline">
-                Forgot Password?
-              </button>
-            </div>
-
             <div className="my-10 flex items-center gap-4">
               <div className="h-px flex-1 bg-gray-300"></div>
-
               <span className="text-sm text-gray-500">or continue as</span>
-
               <div className="h-px flex-1 bg-gray-300"></div>
             </div>
 
-            <a
-              href="/parent"
-              className="block text-center w-full rounded-xl border-2 border-[#0F766E] py-4 text-lg font-semibold text-[#0F766E] transition duration-300 hover:bg-[#0F766E] hover:text-white"
-            >
-              Parent Portal
-            </a>
+            <div className="flex gap-3">
+              <a
+                href="/teacher"
+                className="flex-1 text-center rounded-xl border-2 border-[#191340] py-4 text-sm font-semibold text-[#191340] transition duration-300 hover:bg-[#191340] hover:text-white"
+              >
+                Teacher Portal
+              </a>
+              <a
+                href="/parent"
+                className="flex-1 text-center rounded-xl border-2 border-[#191340] py-4 text-sm font-semibold text-[#191340] transition duration-300 hover:bg-[#191340] hover:text-white"
+              >
+                Parent Portal
+              </a>
+            </div>
           </div>
         </div>
       </div>

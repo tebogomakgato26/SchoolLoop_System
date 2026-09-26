@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { Search, UserCheck, UserPlus, X } from "lucide-react";
+import { authFetch } from "@/lib/auth";
 import { ParentRecord, NewParentInput, Relationship } from "@/types/principal";
 
 interface ParentSearchPanelProps {
@@ -39,9 +40,7 @@ export default function ParentSearchPanel({
     }
     setSearching(true);
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/principal/parents/search?q=${encodeURIComponent(value)}`
-      );
+      const res = await authFetch("/principal/parents/search?q=" + encodeURIComponent(value));
       if (!res.ok) throw new Error("Search failed");
       const data = await res.json();
       setResults(data);
@@ -53,7 +52,6 @@ export default function ParentSearchPanel({
     }
   }
 
-  // --- If a parent has already been selected ---
   if (selectedParent) {
     return (
       <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
@@ -83,7 +81,6 @@ export default function ParentSearchPanel({
     );
   }
 
-  // --- If creating a new parent ---
   if (mode === "create") {
     const parent = newParent || emptyNewParent;
 
@@ -141,11 +138,15 @@ export default function ParentSearchPanel({
             <option value="guardian">Guardian</option>
           </select>
         </div>
+
+        <p className="text-xs text-gray-400 mt-3">
+          This parent's initial login will be their ID number, used as both
+          the username and starting password. They can change it later.
+        </p>
       </div>
     );
   }
 
-  // --- Default: search mode ---
   return (
     <div>
       <div className="relative">
