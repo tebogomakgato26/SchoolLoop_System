@@ -1,9 +1,4 @@
 // src/models/Learner.ts
-//
-// Same note as Parent.ts: adjust column names to your real schema once
-// you have it. The one field that matters most for this feature is
-// `parentId` — that's the foreign key that links a learner to a parent,
-// and it's what lets 2+ learners share the same parent record.
 
 import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../config/db";
@@ -14,11 +9,12 @@ export interface LearnerAttributes {
   fullName: string;
   dateOfBirth: string; // YYYY-MM-DD
   gender: "male" | "female";
-  grade: string; // e.g. "Grade 9"
-  className: string | null; // e.g. "9A" - denormalized label, kept for quick display
+  grade: string; // e.g. "Grade 9" - descriptive homeroom label, not a FK
+  className: string | null; // e.g. "9A" - descriptive homeroom label, not a FK.
+  // Actual subject-level class membership is in the Enrollment table,
+  // via Learner.belongsToMany(Class, { through: Enrollment }).
   admissionNumber: string;
   parentId: string; // FK -> Parent.id
-  classId: string | null; // FK -> Class.id - nullable since a learner can be registered before being assigned a class
   atRiskStatus: "none" | "medium" | "high";
   createdAt?: Date;
   updatedAt?: Date;
@@ -26,7 +22,7 @@ export interface LearnerAttributes {
 
 type LearnerCreationAttributes = Optional<
   LearnerAttributes,
-  "id" | "className" | "classId" | "atRiskStatus"
+  "id" | "className" | "atRiskStatus"
 >;
 
 export class Learner
@@ -41,7 +37,6 @@ export class Learner
   public className!: string | null;
   public admissionNumber!: string;
   public parentId!: string;
-  public classId!: string | null;
   public atRiskStatus!: "none" | "medium" | "high";
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -87,19 +82,7 @@ Learner.init(
       type: DataTypes.UUID,
       allowNull: false,
       field: "parent_id",
-      references: {
-        model: Parent,
-        key: "id",
-      },
-    },
-    classId: {
-      type: DataTypes.UUID,
-      allowNull: true,
-      field: "class_id",
-      // References Class, but that import isn't added here to avoid a
-      // circular import (Class doesn't need to know about Learner directly).
-      // The FK constraint itself is set up via association in Attendance.ts
-      // and Class.ts instead - see Class.hasMany(Learner) below.
+      references: { model: Parent, key: "id" },
     },
     atRiskStatus: {
       type: DataTypes.ENUM("none", "medium", "high"),

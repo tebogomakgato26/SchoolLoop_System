@@ -3,6 +3,7 @@
 import express from "express";
 import cors from "cors";
 
+import authRoutes from "./routes/authRoutes";
 import registrationRoutes from "./routes/registrationRoutes";
 import attendanceRoutes from "./routes/attendanceRoutes";
 import performanceRoutes from "./routes/performanceRoutes";
@@ -12,6 +13,9 @@ import classRoutes from "./routes/classRoutes";
 import teacherAttendanceRoutes from "./routes/teacherAttendanceRoutes";
 import teacherMarksRoutes from "./routes/teacherMarksRoutes";
 import publicTimetableRoutes from "./routes/publicTimetableRoutes";
+import parentRoutes from "./routes/parentRoutes";
+
+import { verifyToken, requireRole } from "./middleware/auth";
 
 const app = express();
 
@@ -22,18 +26,33 @@ app.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
-// Principal portal
-app.use("/api/principal", registrationRoutes);
-app.use("/api/principal", attendanceRoutes);
-app.use("/api/principal", performanceRoutes);
-app.use("/api/principal", atRiskRoutes);
-app.use("/api/principal", timetableRoutes);
+// Public - no token required
+app.use("/api/auth", authRoutes);
+app.use("/api", publicTimetableRoutes); // GET /api/timetable, published entries only
 
-// Shared and teacher facing routes, not scoped under /principal since the
-// teacher and parent portals call these directly.
-app.use("/api", classRoutes);
-app.use("/api", teacherAttendanceRoutes);
-app.use("/api", teacherMarksRoutes);
-app.use("/api", publicTimetableRoutes);
+// Principal portal - every route here requires a valid principal token
+app.use(
+  "/api/principal",
+  verifyToken,
+  requireRole("principal"),
+  registrationRoutes,
+  attendanceRoutes,
+  performanceRoutes,
+  atRiskRoutes,
+  timetableRoutes
+);
+
+// Teacher portal - every route here requires a valid teacher token
+app.use(
+  "/api",
+  verifyToken,
+  requireRole("teacher"),
+  classRoutes,
+  teacherAttendanceRoutes,
+  teacherMarksRoutes
+);
+
+// Parent portal - every route here requires a valid parent token
+app.use("/api/parent", verifyToken, requireRole("parent"), parentRoutes);
 
 export default app;

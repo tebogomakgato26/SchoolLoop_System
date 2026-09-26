@@ -2,6 +2,7 @@
 
 import { Request, Response } from "express";
 import { Learner } from "../models/Learner";
+import { Enrollment } from "../models/Enrollment";
 import { Attendance } from "../models/Attendance";
 
 function todayISO(): string {
@@ -10,17 +11,19 @@ function todayISO(): string {
 
 // GET /api/attendance/class/:classId/roster?date=YYYY-MM-DD
 //
-// Returns every learner in the class, with their attendance status for
-// that date if it's already been marked (or null if not yet marked).
-// This is what the teacher's attendance page loads to render the list
-// of learners with a status picker next to each name.
+// Returns every learner ENROLLED in the class (via Enrollment, not the
+// old Learner.classId), with their attendance status for that date if
+// it's already been marked, or null if not yet marked.
 export async function getClassRoster(req: Request, res: Response) {
   try {
     const { classId } = req.params;
     const date = String(req.query.date || todayISO());
 
+    const enrollments = await Enrollment.findAll({ where: { classId } });
+    const learnerIds = enrollments.map((e) => e.learnerId);
+
     const learners = await Learner.findAll({
-      where: { classId },
+      where: { id: learnerIds },
       order: [["fullName", "ASC"]],
     });
 
@@ -51,16 +54,12 @@ export async function getClassRoster(req: Request, res: Response) {
 // Body shape:
 // {
 //   classId: string,
-//   date: "YYYY-MM-DD",         // optional, defaults to today
-//   records: [
-//     { learnerId: string, status: "present" | "absent" | "late" },
-//     ...
-//   ]
+//   date: "YYYY-MM-DD",
+//   records: [{ learnerId: string, status: "present" | "absent" | "late" }, ...]
 // }
 //
-// This is a bulk upsert — safe to call again for the same class/date
-// if a teacher corrects a mistake, since each learner+class+date is
-// unique (enforced by the index on Attendance).
+// Unchanged from before - this doesn't depend on how a learner is linked
+// to the class, only that the caller says which class and which learners.
 export async function markAttendance(req: Request, res: Response) {
   try {
     const { classId, date, records } = req.body;

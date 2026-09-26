@@ -1,21 +1,15 @@
 // src/models/Class.ts
-//
-// Simplified for now: teacherName is a plain string rather than a
-// foreign key to a real Teacher table, since teacher accounts/auth
-// haven't been built yet (that's a teammate's portal). Once that
-// exists, swap teacherName for a teacherId FK the same way parentId
-// works on Learner.
 
 import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../config/db";
-import { Learner } from "./Learner";
+import { Teacher } from "./Teacher";
 
 export interface ClassAttributes {
   id: string;
   grade: string; // e.g. "Grade 9"
   className: string; // e.g. "9A"
   subject: string; // e.g. "Mathematics"
-  teacherName: string; // e.g. "Ms Dlamini"
+  teacherId: string; // FK -> Teacher.id
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -30,7 +24,7 @@ export class Class
   public grade!: string;
   public className!: string;
   public subject!: string;
-  public teacherName!: string;
+  public teacherId!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -55,10 +49,11 @@ Class.init(
       type: DataTypes.STRING(60),
       allowNull: false,
     },
-    teacherName: {
-      type: DataTypes.STRING(100),
+    teacherId: {
+      type: DataTypes.UUID,
       allowNull: false,
-      field: "teacher_name",
+      field: "teacher_id",
+      references: { model: Teacher, key: "id" },
     },
   },
   {
@@ -69,6 +64,7 @@ Class.init(
   }
 );
 
-// A class has many learners; each learner belongs to (at most) one class.
-Class.hasMany(Learner, { foreignKey: "classId", as: "learners" });
-Learner.belongsTo(Class, { foreignKey: "classId", as: "class" });
+// Note: Class <-> Learner is now many-to-many, declared in Enrollment.ts
+// (Learner.belongsToMany(Class, { through: Enrollment })), not here.
+Teacher.hasMany(Class, { foreignKey: "teacherId", as: "classes" });
+Class.belongsTo(Teacher, { foreignKey: "teacherId", as: "teacher" });

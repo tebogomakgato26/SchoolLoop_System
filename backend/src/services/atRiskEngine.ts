@@ -4,24 +4,19 @@
 // (chronic absence, falling marks) are usually present months before a
 // learner disengages, but nobody tracks them systematically.
 //
-// This reads the Attendance and Mark tables that already exist, scores
-// each learner, writes the result back to Learner.atRiskStatus, and
-// returns the flagged learners for the principal's Alerts page.
+// This reads the Attendance and Mark tables, scores each learner, writes
+// the result back to Learner.atRiskStatus, and returns the flagged
+// learners for the principal's Alerts page.
 
 import { Learner } from "../models/Learner";
 import { Attendance } from "../models/Attendance";
 import { Mark } from "../models/Mark";
 import { Assessment } from "../models/Assessment";
-import { Class } from "../models/Class";
 
-// How many of the learner's most recent attendance records to look at.
 const ATTENDANCE_WINDOW = 10;
-
-// Thresholds. These are deliberately in one place so they are easy to
-// defend in a writeup and easy to tune later.
-const HIGH_ABSENCE = 7; // absences in the window
+const HIGH_ABSENCE = 7;
 const MEDIUM_ABSENCE = 4;
-const HIGH_AVERAGE = 40; // percent
+const HIGH_AVERAGE = 40;
 const MEDIUM_AVERAGE = 45;
 
 export type ComputedRisk = {
@@ -45,7 +40,6 @@ type Scored = {
 };
 
 async function scoreLearner(learner: Learner): Promise<Scored> {
-  // 1. Recent attendance: newest first, capped at the window size.
   const recent = await Attendance.findAll({
     where: { learnerId: learner.id },
     order: [["date", "DESC"]],
@@ -55,8 +49,10 @@ async function scoreLearner(learner: Learner): Promise<Scored> {
   const windowSize = recent.length;
   const absences = recent.filter((r) => r.status === "absent").length;
 
-  // 2. Term average across every mark the learner has, as a percentage
-  //    of each assessment's total (assessments are not all out of 100).
+  // Term average across every mark the learner has, as a percentage of
+  // each assessment's total (assessments are not all out of 100). Since
+  // a learner can now be enrolled in several classes via Enrollment,
+  // this naturally averages across all of them, not just one subject.
   const marks = await Mark.findAll({
     where: { learnerId: learner.id },
     include: [{ model: Assessment, as: "assessment" }],
@@ -75,8 +71,6 @@ async function scoreLearner(learner: Learner): Promise<Scored> {
       ? Math.round(percentages.reduce((sum, v) => sum + v, 0) / percentages.length)
       : 0;
 
-  // 3. Score. A learner with no attendance history yet is not flagged,
-  //    otherwise every newly registered learner would show as at risk.
   const reasons: string[] = [];
   let level: "none" | "medium" | "high" = "none";
 
@@ -113,34 +107,27 @@ async function scoreLearner(learner: Learner): Promise<Scored> {
 
 function buildReason(scored: Scored): string {
   if (scored.reasons.length === 0) return "Flagged by attendance and marks review";
-  // "Chronic absence and term average below 40%"
   return scored.reasons.join(" and ");
 }
 
-// Scores every learner, persists atRiskStatus, and returns only the
-// learners that came out as medium or high.
 export async function runAtRiskScan(): Promise<ComputedRisk[]> {
-  const learners = await Learner.findAll({
-    include: [{ model: Class, as: "class", required: false }],
-  });
+  const learners = await Learner.findAll();
 
   const flagged: ComputedRisk[] = [];
 
   for (const learner of learners) {
     const scored = await scoreLearner(learner);
 
-    // Persist so the value is available to other queries and portals,
-    // not just this response.
     if (learner.atRiskStatus !== scored.level) {
       await learner.update({ atRiskStatus: scored.level });
     }
 
     if (scored.level === "none") continue;
 
-    const cls = (learner as any).class as Class | undefined;
-    const gradeLabel = cls?.className
-      ? "Grade " + cls.className
-      : learner.grade;
+    // Grade label now comes straight from Learner's own descriptive
+    // fields, since the old Class.hasMany(Learner) association no
+    // longer exists - class membership is many-to-many via Enrollment.
+    const gradeLabel = learner.className ? learner.grade + " " + learner.className : learner.grade;
 
     flagged.push({
       id: learner.id,
@@ -154,7 +141,6 @@ export async function runAtRiskScan(): Promise<ComputedRisk[]> {
     });
   }
 
-  // Highest risk first, then most absences.
   flagged.sort((a, b) => {
     if (a.riskLevel !== b.riskLevel) return a.riskLevel === "high" ? -1 : 1;
     return b.daysAbsentRecent - a.daysAbsentRecent;

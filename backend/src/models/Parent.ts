@@ -1,26 +1,17 @@
 // src/models/Parent.ts
-//
-// NOTE: Column names here are reasonable defaults, NOT taken from your
-// actual Term 2 DBML schema (you didn't have it on hand). Once you're
-// back at your schema, compare these fields against your real `Parent`
-// table and adjust — the important structural piece (the parent_id FK
-// on Learner, below) will stay correct regardless of exact column names.
 
 import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../config/db";
+
+export type Relationship = "mother" | "father" | "guardian";
 
 export interface ParentAttributes {
   id: string;
   fullName: string;
   phoneNumber: string;
+  idNumber: string;
   email: string | null;
-  idNumber: string; // SA ID number - used to check for duplicates when searching
-  relationship: "mother" | "father" | "guardian";
-  // Nullable because parents are created by the principal during
-  // registration, before they have ever logged in themselves. The
-  // registration flow (and the seed script, for parents that predate
-  // this field) sets this to a hash of their ID number as a starting
-  // password.
+  relationship: Relationship;
   passwordHash: string | null;
   createdAt?: Date;
   updatedAt?: Date;
@@ -38,9 +29,9 @@ export class Parent
   public id!: string;
   public fullName!: string;
   public phoneNumber!: string;
-  public email!: string | null;
   public idNumber!: string;
-  public relationship!: "mother" | "father" | "guardian";
+  public email!: string | null;
+  public relationship!: Relationship;
   public passwordHash!: string | null;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -54,7 +45,7 @@ Parent.init(
       primaryKey: true,
     },
     fullName: {
-      type: DataTypes.STRING(150),
+      type: DataTypes.STRING(100),
       allowNull: false,
       field: "full_name",
     },
@@ -63,20 +54,24 @@ Parent.init(
       allowNull: false,
       field: "phone_number",
     },
-    email: {
-      type: DataTypes.STRING(150),
-      allowNull: true,
-    },
     idNumber: {
-      type: DataTypes.STRING(13),
+      type: DataTypes.STRING(20),
       allowNull: false,
-      unique: true, // prevents the same parent being registered twice
+      unique: true,
       field: "id_number",
+    },
+    email: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
     },
     relationship: {
       type: DataTypes.ENUM("mother", "father", "guardian"),
       allowNull: false,
     },
+    // Nullable because parents are created by the principal during
+    // registration, before they have ever logged in themselves. The seed
+    // script (and, later, the registration flow) sets this to a hash of
+    // their ID number as a starting password.
     passwordHash: {
       type: DataTypes.STRING(255),
       allowNull: true,

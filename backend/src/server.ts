@@ -7,6 +7,8 @@ import app from "./app";
 import { sequelize } from "./config/db";
 
 // Import models so Sequelize registers them before we sync.
+import "./models/Principal";
+import "./models/Teacher";
 import "./models/Parent";
 import "./models/Learner";
 import "./models/Class";

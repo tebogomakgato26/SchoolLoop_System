@@ -4,10 +4,9 @@ import { Request, Response } from "express";
 import { Assessment } from "../models/Assessment";
 import { Mark } from "../models/Mark";
 import { Learner } from "../models/Learner";
+import { Enrollment } from "../models/Enrollment";
 
 // GET /api/marks/class/:classId/assessments
-// Lists assessments already created for a class, so a teacher can pick
-// one to enter/edit marks for, instead of always creating a new one.
 export async function getAssessmentsForClass(req: Request, res: Response) {
   try {
     const { classId } = req.params;
@@ -43,9 +42,10 @@ export async function createAssessment(req: Request, res: Response) {
 }
 
 // GET /api/marks/assessment/:assessmentId/roster
-// Returns every learner in the assessment's class, with their score if
-// already entered (or null), plus the assessment's totalMarks for
-// reference when rendering the entry form.
+//
+// Returns every learner ENROLLED in the assessment's class (via
+// Enrollment, not the old Learner.classId), with their score if already
+// entered, or null.
 export async function getMarksRoster(req: Request, res: Response) {
   try {
     const { assessmentId } = req.params;
@@ -55,8 +55,11 @@ export async function getMarksRoster(req: Request, res: Response) {
       return res.status(404).json({ message: "Assessment not found." });
     }
 
+    const enrollments = await Enrollment.findAll({ where: { classId: assessment.classId } });
+    const learnerIds = enrollments.map((e) => e.learnerId);
+
     const learners = await Learner.findAll({
-      where: { classId: assessment.classId },
+      where: { id: learnerIds },
       order: [["fullName", "ASC"]],
     });
 
@@ -79,7 +82,6 @@ export async function getMarksRoster(req: Request, res: Response) {
 
 // POST /api/marks/submit
 // Body: { assessmentId, records: [{ learnerId, score }, ...] }
-// Bulk upsert - safe to resubmit to correct a mistake.
 export async function submitMarks(req: Request, res: Response) {
   try {
     const { assessmentId, records } = req.body;
@@ -95,7 +97,6 @@ export async function submitMarks(req: Request, res: Response) {
       return res.status(404).json({ message: "Assessment not found." });
     }
 
-    // Basic sanity check: no score should exceed the assessment's total
     const invalid = records.find(
       (r: { score: number }) => r.score < 0 || r.score > assessment.totalMarks
     );
