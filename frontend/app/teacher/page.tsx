@@ -35,8 +35,6 @@ export default function TeacherPage() {
   return (
     <main className="min-h-screen bg-[#E9E9EF] p-4">
       <div className="min-h-[calc(100vh-32px)] rounded-[35px] border border-gray-200 bg-gray-100 shadow-xl">
-        {/* Header */}
-
         <div className="rounded-t-[4px] bg-[#0F766E] px-10 py-8 text-center">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#115E59] shadow-xl">
             <span className="text-xl font-bold text-white">SL</span>
@@ -55,8 +53,6 @@ export default function TeacherPage() {
           </div>
         </div>
 
-        {/* Form */}
-
         <div className="w-full px-10 py-12 lg:px-24">
           <div className="mx-auto max-w-xl">
             <h2 className="text-center text-3xl font-bold text-gray-800">
@@ -73,16 +69,12 @@ export default function TeacherPage() {
               </div>
             )}
 
-            {/* Email */}
-
             <div className="mt-10">
               <label className="mb-2 block text-base font-medium text-gray-700">
                 Email Address
               </label>
-
               <div className="flex items-center rounded-xl border border-gray-300 bg-gray-50 px-5 transition focus-within:border-[#0F766E]">
                 <Mail className="h-5 w-5 text-gray-400" />
-
                 <input
                   type="email"
                   placeholder="teacher@schoolloop.com"
@@ -93,16 +85,12 @@ export default function TeacherPage() {
               </div>
             </div>
 
-            {/* Password */}
-
             <div className="mt-7">
               <label className="mb-2 block text-base font-medium text-gray-700">
                 Password
               </label>
-
               <div className="flex items-center rounded-xl border border-gray-300 bg-gray-50 px-5 transition focus-within:border-[#0F766E]">
                 <Lock className="h-5 w-5 text-gray-400" />
-
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="********"
@@ -111,7 +99,6 @@ export default function TeacherPage() {
                   onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
                   className="w-full bg-transparent px-4 py-4 text-base outline-none"
                 />
-
                 <Eye
                   onClick={() => setShowPassword((s) => !s)}
                   className="h-5 w-5 cursor-pointer text-gray-400 hover:text-[#0F766E]"
@@ -127,26 +114,26 @@ export default function TeacherPage() {
               {loading ? "Signing in..." : "Sign In"}
             </button>
 
-            <div className="mt-5 text-center">
-              <button className="text-base font-medium text-[#0F766E] hover:underline">
-                Forgot Password?
-              </button>
-            </div>
-
             <div className="my-10 flex items-center gap-4">
               <div className="h-px flex-1 bg-gray-300"></div>
-
               <span className="text-sm text-gray-500">or continue as</span>
-
               <div className="h-px flex-1 bg-gray-300"></div>
             </div>
 
-            <a
-              href="/parent"
-              className="block text-center w-full rounded-xl border-2 border-[#0F766E] py-4 text-lg font-semibold text-[#0F766E] transition duration-300 hover:bg-[#0F766E] hover:text-white"
-            >
-              Parent Portal
-            </a>
+            <div className="flex gap-3">
+              <a
+                href="/principal"
+                className="flex-1 text-center rounded-xl border-2 border-[#0F766E] py-4 text-sm font-semibold text-[#0F766E] transition duration-300 hover:bg-[#0F766E] hover:text-white"
+              >
+                Principal Portal
+              </a>
+              <a
+                href="/parent"
+                className="flex-1 text-center rounded-xl border-2 border-[#0F766E] py-4 text-sm font-semibold text-[#0F766E] transition duration-300 hover:bg-[#0F766E] hover:text-white"
+              >
+                Parent Portal
+              </a>
+            </div>
           </div>
         </div>
       </div>

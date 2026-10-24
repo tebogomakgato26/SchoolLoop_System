@@ -1,3 +1,6 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import TeacherHearder from "@/components/teacher/TeacherHearder";
 import TabNav from "@/components/common/TabNav";
 import { LearnerProvider } from "@/lib/context/LearnerContext";
@@ -7,6 +10,13 @@ export default function TeacherLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+
+  // Login page and home page have their own full-page design, no sidebar
+  if (pathname === "/teacher" || pathname === "/teacher/home") {
+    return <div className="min-h-screen bg-gray-50">{children}</div>;
+  }
+
   return (
     <LearnerProvider>
       <div className="flex min-h-screen bg-slate-100">
