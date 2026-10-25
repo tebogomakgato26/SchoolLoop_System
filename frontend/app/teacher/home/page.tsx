@@ -1,7 +1,7 @@
 // frontend/app/teacher/home/page.tsx
 "use client";
 
-import { ClipboardCheck, NotebookPen, UserPlus, LogOut } from "lucide-react";
+import { ClipboardCheck, NotebookPen, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import RequireAuth from "@/components/auth/RequireAuth";
 import { getSession, clearSession } from "@/lib/auth";
@@ -28,12 +28,6 @@ function TeacherHomeContent() {
       title: "Marks",
       description: "Capture and update assessment scores.",
     },
-    {
-      href: "/teacher/register",
-      icon: UserPlus,
-      title: "Register",
-      description: "View your class register and learner details.",
-    },
   ];
 
   return (
@@ -56,7 +50,7 @@ function TeacherHomeContent() {
         </div>
 
         <div className="px-10 py-12 lg:px-24">
-          <div className="grid sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
+          <div className="grid sm:grid-cols-2 gap-5 max-w-2xl mx-auto">
             {links.map((link) => {
               const Icon = link.icon;
               return (
