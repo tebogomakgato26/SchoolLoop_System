@@ -42,7 +42,11 @@ app.use(
   timetableRoutes
 );
 
+// Parent portal - every route here requires a valid parent token
+app.use("/api/parent", verifyToken, requireRole("parent"), parentRoutes);
+
 // Teacher portal - every route here requires a valid teacher token
+// (keep this LAST: it is mounted on /api, so it catches every /api path)
 app.use(
   "/api",
   verifyToken,
@@ -51,8 +55,5 @@ app.use(
   teacherAttendanceRoutes,
   teacherMarksRoutes
 );
-
-// Parent portal - every route here requires a valid parent token
-app.use("/api/parent", verifyToken, requireRole("parent"), parentRoutes);
 
 export default app;

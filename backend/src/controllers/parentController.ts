@@ -9,7 +9,6 @@
 import { Response } from "express";
 import { AuthenticatedRequest } from "../middleware/auth";
 import { Learner } from "../models/Learner";
-import { Class } from "../models/Class";
 import { Attendance } from "../models/Attendance";
 import { Mark } from "../models/Mark";
 import { Assessment } from "../models/Assessment";
@@ -17,7 +16,6 @@ import { Assessment } from "../models/Assessment";
 async function assertOwnedLearner(parentId: string, learnerId: string) {
   const learner = await Learner.findOne({
     where: { id: learnerId, parentId },
-    include: [{ model: Class, as: "class", required: false }],
   });
   return learner;
 }
@@ -28,7 +26,6 @@ export async function getMyChildren(req: AuthenticatedRequest, res: Response) {
     const parentId = req.user!.id;
     const children = await Learner.findAll({
       where: { parentId },
-      include: [{ model: Class, as: "class", required: false }],
     });
 
     res.json(
