@@ -1,61 +1,129 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
-import { LearnerProfile } from "@/types/teacher";
-
-const initialLearners: LearnerProfile[] = [
-  { id: "1", name: "Amanhle Dube", grade: "Grade 9A", todayStatus: "present", totalAbsences: 2, averageScore: 82 },
-  { id: "2", name: "Sipho Ndlovu", grade: "Grade 9A", todayStatus: "present", totalAbsences: 9, averageScore: 67 },
-  { id: "3", name: "Lerato Khumalo", grade: "Grade 9A", todayStatus: "present", totalAbsences: 1, averageScore: 91 },
-  { id: "4", name: "Nandi Cele", grade: "Grade 9A", todayStatus: "present", totalAbsences: 4, averageScore: 74 },
-  { id: "5", name: "Thabo Mokoena", grade: "Grade 9A", todayStatus: "present", totalAbsences: 0, averageScore: 88 },
-  { id: "6", name: "Zanele Mahlangu", grade: "Grade 9A", todayStatus: "present", totalAbsences: 10, averageScore: 55 },
-  { id: "7", name: "Kagiso Sithole", grade: "Grade 9A", todayStatus: "present", totalAbsences: 3, averageScore: 38 },
-  { id: "8", name: "Precious Nkosi", grade: "Grade 9A", todayStatus: "present", totalAbsences: 5, averageScore: 71 },
-  { id: "9", name: "Mpho Tshabalala", grade: "Grade 9A", todayStatus: "present", totalAbsences: 2, averageScore: 79 },
-  { id: "10", name: "Bongani Zulu", grade: "Grade 9A", todayStatus: "present", totalAbsences: 6, averageScore: 63 },
-  { id: "11", name: "Refilwe Mathebula", grade: "Grade 9A", todayStatus: "present", totalAbsences: 1, averageScore: 95 },
-  { id: "12", name: "Sibusiso Ngwenya", grade: "Grade 9A", todayStatus: "present", totalAbsences: 7, averageScore: 48 },
-  { id: "13", name: "Nomvula Radebe", grade: "Grade 9A", todayStatus: "present", totalAbsences: 0, averageScore: 84 },
-  { id: "14", name: "Tshepo Maluleke", grade: "Grade 9A", todayStatus: "present", totalAbsences: 11, averageScore: 42 },
-  { id: "15", name: "Ayanda Buthelezi", grade: "Grade 9A", todayStatus: "present", totalAbsences: 4, averageScore: 35 },
-];
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from "react";
+import { LearnerProfile, ClassInfo } from "@/types/teacher";
+import { api } from "@/lib/api";
 
 interface LearnerContextValue {
+  teacherName: string;
+  classes: ClassInfo[];
+  selectedClassId: string | null;
+  selectedClass: ClassInfo | null;
+  selectClass: (id: string) => void;
   learners: LearnerProfile[];
+  flaggedIds: string[];
+  loading: boolean;
+  error: string | null;
   setAttendanceStatus: (id: string, status: "present" | "absent") => void;
-  setScore: (id: string, score: number) => void;
+  saveAttendance: () => Promise<void>;
+  flagLearner: (id: string, reason: string) => Promise<void>;
+  reload: () => Promise<void>;
 }
 
 const LearnerContext = createContext<LearnerContextValue | null>(null);
 
+const message = (e: unknown, fallback: string) =>
+  e instanceof Error ? e.message : fallback;
+
 export function LearnerProvider({ children }: { children: ReactNode }) {
-  const [learners, setLearners] = useState<LearnerProfile[]>(initialLearners);
+  const [teacherName, setTeacherName] = useState("");
+  const [classes, setClasses] = useState<ClassInfo[]>([]);
+  const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
+  const [learners, setLearners] = useState<LearnerProfile[]>([]);
+  const [flaggedIds, setFlaggedIds] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadClass = useCallback(async (classId: string) => {
+    try {
+      setError(null);
+      const [summary, flags] = await Promise.all([
+        api.getClassSummary(classId),
+        api.getFlags(),
+      ]);
+      setLearners(summary);
+      setFlaggedIds(flags.map((f) => f.learnerId));
+    } catch (e) {
+      setError(message(e, "Could not load learners"));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // 1. Who is the teacher, and which classes do they have?
+  useEffect(() => {
+    api
+      .getMe()
+      .then((me) => {
+        setTeacherName(me.fullName);
+        setClasses(me.classes);
+        if (me.classes.length > 0) setSelectedClassId(me.classes[0].id);
+        else setLoading(false);
+      })
+      .catch((e) => {
+        setError(message(e, "Could not load your account"));
+        setLoading(false);
+      });
+  }, []);
+
+  // 2. Load the learners whenever the selected class changes.
+  useEffect(() => {
+    if (!selectedClassId) return;
+    setLoading(true);
+    loadClass(selectedClassId);
+  }, [selectedClassId, loadClass]);
+
+  const reload = useCallback(async () => {
+    if (selectedClassId) await loadClass(selectedClassId);
+  }, [selectedClassId, loadClass]);
 
   const setAttendanceStatus = (id: string, status: "present" | "absent") => {
     setLearners((prev) =>
-      prev.map((l) => {
-        if (l.id !== id) return l;
-        if (l.todayStatus === status) return l;
-
-        const delta = status === "absent" ? 1 : -1;
-        return {
-          ...l,
-          todayStatus: status,
-          totalAbsences: Math.max(0, l.totalAbsences + delta),
-        };
-      })
+      prev.map((l) => (l.id === id ? { ...l, todayStatus: status } : l))
     );
   };
 
-  const setScore = (id: string, score: number) => {
-    setLearners((prev) =>
-      prev.map((l) => (l.id === id ? { ...l, averageScore: score } : l))
+  const saveAttendance = async () => {
+    if (!selectedClassId) return;
+    await api.saveAttendance(
+      selectedClassId,
+      learners.map((l) => ({ learnerId: l.id, status: l.todayStatus ?? "present" }))
     );
+    await loadClass(selectedClassId); // refresh absence counts and risk levels
   };
+
+  const flagLearner = async (id: string, reason: string) => {
+    await api.flagLearner(id, reason);
+    setFlaggedIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
+  };
+
+  const selectedClass = classes.find((c) => c.id === selectedClassId) ?? null;
 
   return (
-    <LearnerContext.Provider value={{ learners, setAttendanceStatus, setScore }}>
+    <LearnerContext.Provider
+      value={{
+        teacherName,
+        classes,
+        selectedClassId,
+        selectedClass,
+        selectClass: setSelectedClassId,
+        learners,
+        flaggedIds,
+        loading,
+        error,
+        setAttendanceStatus,
+        saveAttendance,
+        flagLearner,
+        reload,
+      }}
+    >
       {children}
     </LearnerContext.Provider>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import TeacherHearder from "@/components/teacher/TeacherHearder";
+import ConnectedHeader from "@/components/teacher/ConnectedHeader";
 import TabNav from "@/components/common/TabNav";
 import RequireAuth from "@/components/auth/RequireAuth";
 import { LearnerProvider } from "@/lib/context/LearnerContext";
@@ -24,6 +24,7 @@ export default function TeacherLayout({
     <RequireAuth role="teacher">
       <LearnerProvider>
         <div className="flex min-h-screen bg-slate-100">
+<<<<<<< HEAD
           <aside className="sticky top-0 flex h-screen w-64 flex-shrink-0 flex-col gap-6 overflow-y-auto bg-teal-800 px-4 py-6">
             <TeacherHearder
               date="Monday, 28 April 2026"
@@ -31,6 +32,10 @@ export default function TeacherLayout({
               subject="Mathematics"
               grade="Grade 9A"
             />
+=======
+          <aside className="flex w-64 flex-shrink-0 flex-col gap-6 bg-teal-800 px-4 py-6">
+            <ConnectedHeader />
+>>>>>>> 6a67ba530db67ac6ed26b04e80d177ae75ccf53e
             <TabNav />
 
             {/* Pushes the sign out button to the bottom of the sidebar */}

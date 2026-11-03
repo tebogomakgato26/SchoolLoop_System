@@ -1,29 +1,44 @@
+export type AttendanceStatus = "present" | "absent" | "late";
+export type RiskLevel = "none" | "medium" | "high";
+
+export interface ClassInfo {
+  id: string;
+  grade: string;
+  className: string;
+  subject: string;
+}
+
 export interface LearnerProfile {
   id: string;
   name: string;
-  grade: string;
-  todayStatus: "present" | "absent";
-  totalAbsences: number;
-  averageScore: number;
+  admissionNumber: string;
+  todayStatus: AttendanceStatus | null;
+  daysAbsentRecent: number;
+  daysWindow: number;
+  termAverage: number;
+  riskLevel: RiskLevel;
+  riskReasons: string[];
 }
-
-export const HIGH_RISK_ABSENCE_THRESHOLD = 8;
-export const HIGH_RISK_SCORE_THRESHOLD = 30;
 
 export function isHighRisk(learner: LearnerProfile): boolean {
-  return (
-    learner.totalAbsences > HIGH_RISK_ABSENCE_THRESHOLD ||
-    learner.averageScore < HIGH_RISK_SCORE_THRESHOLD
-  );
+  return learner.riskLevel === "high";
 }
 
+export function isAtRisk(learner: LearnerProfile): boolean {
+  return learner.riskLevel !== "none";
+}
+
+const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
 export function getRiskReason(learner: LearnerProfile): string[] {
-  const reasons: string[] = [];
-  if (learner.totalAbsences > HIGH_RISK_ABSENCE_THRESHOLD) {
-    reasons.push(`Absent ${learner.totalAbsences} times`);
-  }
-  if (learner.averageScore < HIGH_RISK_SCORE_THRESHOLD) {
-    reasons.push(`Average score ${learner.averageScore}%`);
-  }
-  return reasons;
+  return learner.riskReasons.map((r) => {
+    const lower = r.toLowerCase();
+    if (lower.includes("absence")) {
+      return `${capitalise(r)} (${learner.daysAbsentRecent} of last ${learner.daysWindow} days)`;
+    }
+    if (lower.includes("average")) {
+      return `Term average ${learner.termAverage}%`;
+    }
+    return capitalise(r);
+  });
 }

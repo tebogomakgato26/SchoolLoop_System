@@ -1,6 +1,14 @@
-export interface Mark {
+export interface Assessment {
   id: string;
-  learnerName: string;
-  subject: string;
-  score: number;
+  classId: string;
+  title: string;
+  totalMarks: number;
+  date: string;
+}
+
+export interface MarkRosterRow {
+  learnerId: string;
+  fullName: string;
+  admissionNumber: string;
+  score: number | null;
 }
