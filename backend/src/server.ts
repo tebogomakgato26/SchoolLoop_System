@@ -16,6 +16,7 @@ import "./models/Attendance";
 import "./models/Assessment";
 import "./models/Mark";
 import "./models/ExamTimetable";
+import "./models/LearnerFlag";
 
 const PORT = process.env.PORT || 5000;
 

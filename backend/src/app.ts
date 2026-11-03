@@ -14,6 +14,7 @@ import teacherAttendanceRoutes from "./routes/teacherAttendanceRoutes";
 import teacherMarksRoutes from "./routes/teacherMarksRoutes";
 import publicTimetableRoutes from "./routes/publicTimetableRoutes";
 import parentRoutes from "./routes/parentRoutes";
+import teacherPortalRoutes from "./routes/teacherPortalRoutes";
 
 import { verifyToken, requireRole } from "./middleware/auth";
 
@@ -53,7 +54,8 @@ app.use(
   requireRole("teacher"),
   classRoutes,
   teacherAttendanceRoutes,
-  teacherMarksRoutes
+  teacherMarksRoutes,
+  teacherPortalRoutes
 );
 
 export default app;

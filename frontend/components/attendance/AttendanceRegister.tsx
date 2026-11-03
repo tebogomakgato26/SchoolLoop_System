@@ -7,12 +7,14 @@ import LearnerRow from "@/components/attendance/LearnerRow";
 import SaveButton from "@/components/attendance/SaveButton";
 
 export default function AttendanceRegister() {
-  const { learners, setAttendanceStatus } = useLearners();
+  const { learners, loading, error, setAttendanceStatus, saveAttendance } = useLearners();
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
-  const presentCount = learners.filter((l) => l.todayStatus === "present").length;
+  // Not yet marked counts as present, like before.
   const absentCount = learners.filter((l) => l.todayStatus === "absent").length;
+  const presentCount = learners.length - absentCount;
 
   const handleStatusChange = (id: string, status: "present" | "absent") => {
     setAttendanceStatus(id, status);
@@ -21,10 +23,22 @@ export default function AttendanceRegister() {
 
   const handleSave = async () => {
     setSaving(true);
-    await new Promise((resolve) => setTimeout(resolve, 600));
-    setSaving(false);
-    setSaved(true);
+    setSaveError(null);
+    try {
+      await saveAttendance();
+      setSaved(true);
+    } catch (e) {
+      setSaveError(e instanceof Error ? e.message : "Could not save attendance");
+    } finally {
+      setSaving(false);
+    }
   };
+
+  if (loading) return <p className="py-10 text-center text-sm text-slate-400">Loading learners...</p>;
+  if (error) return <p className="py-10 text-center text-sm text-red-600">{error}</p>;
+  if (learners.length === 0) {
+    return <p className="py-10 text-center text-sm text-slate-400">No learners enrolled in this class yet.</p>;
+  }
 
   return (
     <>
@@ -34,11 +48,17 @@ export default function AttendanceRegister() {
         {learners.map((learner) => (
           <LearnerRow
             key={learner.id}
-            learner={{ id: learner.id, name: learner.name, status: learner.todayStatus }}
+            learner={{
+              id: learner.id,
+              name: learner.name,
+              status: learner.todayStatus === "absent" ? "absent" : "present",
+            }}
             onStatusChange={handleStatusChange}
           />
         ))}
       </ul>
+
+      {saveError && <p className="mt-4 text-sm text-red-600">{saveError}</p>}
 
       <SaveButton onSave={handleSave} saving={saving} saved={saved} />
     </>

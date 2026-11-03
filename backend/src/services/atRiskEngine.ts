@@ -30,7 +30,8 @@ export type ComputedRisk = {
   flaggedReason: string;
 };
 
-type Scored = {
+
+export type Scored = {
   learner: Learner;
   absences: number;
   windowSize: number;
@@ -39,7 +40,8 @@ type Scored = {
   reasons: string[];
 };
 
-async function scoreLearner(learner: Learner): Promise<Scored> {
+
+export async function scoreLearner(learner: Learner): Promise<Scored> {
   const recent = await Attendance.findAll({
     where: { learnerId: learner.id },
     order: [["date", "DESC"]],
