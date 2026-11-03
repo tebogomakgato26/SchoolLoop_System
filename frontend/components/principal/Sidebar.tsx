@@ -10,6 +10,7 @@ import {
   BellRing,
   UserPlus,
 } from "lucide-react";
+import SignOutButton from "@/components/SignOutButton";
 
 const navItems = [
   { href: "/principal/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -23,7 +24,7 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden lg:flex flex-col w-60 shrink-0 bg-[#191340] min-h-screen py-6">
+    <aside className="hidden lg:flex flex-col w-60 shrink-0 bg-[#191340] sticky top-0 h-screen overflow-y-auto py-6">
       {/* Brand */}
       <div className="px-6 mb-8">
         <p className="text-[11px] font-medium text-indigo-300/70 tracking-wide">
@@ -53,6 +54,11 @@ export default function Sidebar() {
           );
         })}
       </nav>
+
+      {/* Sign out */}
+      <div className="px-3 pb-4">
+        <SignOutButton />
+      </div>
 
       {/* User */}
       <div className="px-6 pt-4 border-t border-white/10 flex items-center gap-3">

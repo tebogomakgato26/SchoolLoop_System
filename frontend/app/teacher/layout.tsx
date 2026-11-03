@@ -5,6 +5,7 @@ import TeacherHearder from "@/components/teacher/TeacherHearder";
 import TabNav from "@/components/common/TabNav";
 import RequireAuth from "@/components/auth/RequireAuth";
 import { LearnerProvider } from "@/lib/context/LearnerContext";
+import SignOutButton from "@/components/SignOutButton";
 
 export default function TeacherLayout({
   children,
@@ -23,7 +24,7 @@ export default function TeacherLayout({
     <RequireAuth role="teacher">
       <LearnerProvider>
         <div className="flex min-h-screen bg-slate-100">
-          <aside className="flex w-64 flex-shrink-0 flex-col gap-6 bg-teal-800 px-4 py-6">
+          <aside className="sticky top-0 flex h-screen w-64 flex-shrink-0 flex-col gap-6 overflow-y-auto bg-teal-800 px-4 py-6">
             <TeacherHearder
               date="Monday, 28 April 2026"
               teacherName="Ms N. Dlamini"
@@ -31,6 +32,10 @@ export default function TeacherLayout({
               grade="Grade 9A"
             />
             <TabNav />
+
+            {/* Pushes the sign out button to the bottom of the sidebar */}
+            <div className="flex-1" />
+            <SignOutButton />
           </aside>
 
           <main className="flex-1 px-8 py-8">
